@@ -1,13 +1,422 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CET-4 英语学习平台</title>
-    <script type="module" crossorigin src="./assets/index-Bu4EqK9I.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-BGFtghtQ.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>四级备考助手 - CET-4 Learning Platform</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+    .app-container { background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); overflow: hidden; max-width: 1200px; margin: 0 auto; }
+    .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 24px; text-align: center; }
+    .header h1 { font-size: 28px; margin-bottom: 8px; }
+    .nav-tabs { display: flex; background: #f8f9fa; border-bottom: 1px solid #e9ecef; }
+    .nav-tab { flex: 1; padding: 16px; border: none; background: transparent; cursor: pointer; font-size: 16px; font-weight: 500; color: #495057; transition: all 0.3s; }
+    .nav-tab:hover { background: #e9ecef; }
+    .nav-tab.active { background: white; color: #667eea; border-bottom: 3px solid #667eea; }
+    .content { padding: 24px; }
+    .module-selector { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .module-card { padding: 24px; border: 2px solid #e9ecef; border-radius: 12px; cursor: pointer; transition: all 0.3s; text-align: center; }
+    .module-card:hover { border-color: #667eea; transform: translateY(-2px); }
+    .module-card.selected { border-color: #667eea; background: linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%); }
+    .module-card h3 { color: #333; margin-bottom: 8px; }
+    .module-card p { color: #666; font-size: 14px; }
+    .question-list { display: flex; flex-direction: column; gap: 12px; }
+    .question-item { padding: 16px; border: 1px solid #e9ecef; border-radius: 8px; cursor: pointer; transition: all 0.3s; display: flex; justify-content: space-between; align-items: center; }
+    .question-item:hover { border-color: #667eea; background: #f8f9fa; }
+    .question-item.completed { background: #e8f5e9; border-color: #4caf50; }
+    .question-item .status { font-size: 12px; padding: 4px 8px; border-radius: 4px; }
+    .question-item .status.correct { background: #4caf50; color: white; }
+    .question-item .status.incorrect { background: #f44336; color: white; }
+    .practice-area { background: #f8f9fa; border-radius: 12px; padding: 24px; }
+    .content-display { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #667eea; white-space: pre-line; line-height: 1.8; }
+    .question-text { font-size: 18px; font-weight: 600; color: #333; margin-bottom: 20px; }
+    .options-list { display: flex; flex-direction: column; gap: 12px; }
+    .option-item { display: flex; align-items: center; padding: 14px 18px; border: 2px solid #e9ecef; border-radius: 8px; cursor: pointer; transition: all 0.3s; }
+    .option-item:hover { border-color: #667eea; }
+    .option-item.selected { border-color: #667eea; background: rgba(102,126,234,0.1); }
+    .option-item.correct { border-color: #4caf50; background: #e8f5e9; }
+    .option-item.incorrect { border-color: #f44336; background: #ffebee; }
+    .option-label { width: 30px; height: 30px; border-radius: 50%; background: #e9ecef; display: flex; align-items: center; justify-content: center; font-weight: 600; margin-right: 12px; flex-shrink: 0; }
+    .option-item.selected .option-label { background: #667eea; color: white; }
+    .option-item.correct .option-label { background: #4caf50; color: white; }
+    .option-item.incorrect .option-label { background: #f44336; color: white; }
+    .action-buttons { display: flex; gap: 12px; margin-top: 20px; }
+    .btn { padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 500; transition: all 0.3s; }
+    .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102,126,234,0.4); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-secondary { background: #e9ecef; color: #495057; }
+    .btn-secondary:hover { background: #dee2e6; }
+    .feedback-section { margin-top: 20px; padding: 20px; border-radius: 8px; animation: slideIn 0.3s ease; }
+    @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    .feedback-section.correct { background: #e8f5e9; border: 2px solid #4caf50; }
+    .feedback-section.incorrect { background: #ffebee; border: 2px solid #f44336; }
+    .feedback-title { font-size: 18px; font-weight: 600; margin-bottom: 12px; }
+    .feedback-section.correct .feedback-title { color: #2e7d32; }
+    .feedback-section.incorrect .feedback-title { color: #c62828; }
+    .feedback-analysis { color: #555; line-height: 1.6; }
+    .stats-panel { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; text-align: center; }
+    .stat-item h4 { font-size: 28px; margin-bottom: 4px; }
+    .stat-item p { opacity: 0.9; font-size: 14px; }
+    .back-btn { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 16px; padding: 8px 16px; background: #e9ecef; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; color: #495057; transition: all 0.3s; }
+    .back-btn:hover { background: #dee2e6; }
+    .filter-section { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+    .filter-btn { padding: 8px 16px; border: 2px solid #e9ecef; background: white; border-radius: 20px; cursor: pointer; font-size: 14px; transition: all 0.3s; }
+    .filter-btn:hover { border-color: #667eea; }
+    .filter-btn.active { background: #667eea; color: white; border-color: #667eea; }
+    .empty-state { text-align: center; padding: 60px 20px; color: #666; }
+    .empty-state h3 { margin-bottom: 12px; color: #333; }
+    textarea.writing-input { width: 100%; min-height: 200px; padding: 16px; border-radius: 8px; border: 1px solid #ddd; font-size: 16px; line-height: 1.6; font-family: inherit; }
+    .word-count { margin-top: 8px; color: #666; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <div class="header">
+      <h1>📚 CET-4 英语学习平台</h1>
+      <p>College English Test Band 4</p>
+    </div>
+
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="switchTab('listening')">🎧 听力</button>
+      <button class="nav-tab" onclick="switchTab('reading')">📖 阅读</button>
+      <button class="nav-tab" onclick="switchTab('writing')">✍️ 写作</button>
+    </div>
+
+    <div class="content" id="content">
+      <!-- 内容由 JavaScript 动态生成 -->
+    </div>
+  </div>
+
+  <script>
+    // ============== 数据 ==============
+    const listeningData = {
+      "short-dialog": [
+        {"id":"s1","dialogue":"M: Can I help you?\nW: Yes, I'm looking for a book on history.","question":"What is the woman looking for?","options":["A book on science","A book on history","A dictionary","A magazine"],"answer":"B","analysis":"关键词 'book on history' 直接回答了问题"},
+        {"id":"s2","dialogue":"M: What time is it now?\nW: It's 7:30. The movie starts at 8:00.","question":"How much time do they have before the movie?","options":["15 minutes","30 minutes","45 minutes","60 minutes"],"answer":"B","analysis":"8:00 - 7:30 = 30 分钟"},
+        {"id":"s3","dialogue":"W: I'm so tired. I stayed up late last night.\nM: You should go to bed earlier tonight.","question":"What does the man suggest?","options":["Watch a movie","Go to bed earlier","Drink coffee","Take a nap"],"answer":"B","analysis":"男士建议女士今晚早点睡觉"},
+        {"id":"s4","dialogue":"M: How do you usually go to work?\nW: I take the subway. It's faster than the bus.","question":"Why does the woman take the subway?","options":["It's cheaper","It's faster","It's more comfortable","It's closer"],"answer":"B","analysis":"女士明确说 'It's faster than the bus'"},
+        {"id":"s5","dialogue":"W: Did you finish your homework?\nM: Not yet. I'll do it after dinner.","question":"When will the man do his homework?","options":["Before dinner","After dinner","Tomorrow","Later tonight"],"answer":"B","analysis":"男士说 'I'll do it after dinner'"}
+      ],
+      "long-dialog": [
+        {"id":"l1","dialogue":"W: Good morning. I'd like to inquire about the English course.\nM: Good morning. We have several courses available. What level are you looking for?\nW: I'm a beginner. I want to improve my speaking skills.\nM: Then I recommend our Basic English Communication course. It starts next Monday.\nW: That sounds good. How many students are there in one class?\nM: Usually around 15 students. This ensures everyone gets enough practice time.\nW: Perfect. How much is the course fee?\nM: It's 2000 yuan for 12 weeks. And we offer a free trial class.\nW: Great! I'd like to sign up for the trial class first.\nM: No problem. Let me get your information.","questions":[{"question":"What does the woman want to improve?","options":["Writing skills","Speaking skills","Listening skills","Reading skills"],"answer":"B","analysis":"女士说 'I want to improve my speaking skills'"},{"question":"How many students are in one class?","options":["About 10","About 15","About 20","About 25"],"answer":"B","analysis":"男士说 'Usually around 15 students'"},{"question":"How much is the course fee?","options":["1000 yuan","1500 yuan","2000 yuan","2500 yuan"],"answer":"C","analysis":"男士说 'It's 2000 yuan for 12 weeks'"}]}
+      ],
+      "passage": [
+        {"id":"p1","passage":"Sleep is essential for our health and well-being. Studies have shown that people who get enough sleep are more productive, have better memory, and are less likely to get sick. However, in today's fast-paced world, many people sacrifice sleep to get more work done. According to research, adults need between 7 and 9 hours of sleep each night. Unfortunately, about one-third of adults report getting less than 7 hours of sleep. This lack of sleep can lead to serious health problems, including heart disease, diabetes, and obesity. Experts recommend establishing a regular sleep schedule and avoiding screens before bedtime.","questions":[{"question":"What is the main idea of the passage?","options":["Sleep is not important","Sleep is essential and lack of it causes problems","Everyone should sleep more than 10 hours","Only children need enough sleep"],"answer":"B","analysis":"文章主要讲述了睡眠对健康的重要性以及睡眠不足带来的问题"},{"question":"How many hours of sleep do adults need?","options":["5-6 hours","7-9 hours","10-12 hours","Less than 7 hours"],"answer":"B","analysis":"文中明确提到 adults need between 7 and 9 hours"}]}
+      ]
+    };
+
+    const readingData = {
+      "careful-reading": [
+        {"id":"r1","title":"The Importance of Sleep","passage":"Sleep is essential for our health and well-being. Studies have shown that people who get enough sleep are more productive, have better memory, and are less likely to get sick. However, in today's fast-paced world, many people sacrifice sleep to get more work done.\n\nAccording to research, adults need between 7 and 9 hours of sleep each night. Unfortunately, about one-third of adults report getting less than 7 hours of sleep. This lack of sleep can lead to serious health problems, including heart disease, diabetes, and obesity.\n\nExperts recommend establishing a regular sleep schedule and avoiding screens before bedtime. Creating a comfortable sleep environment and avoiding caffeine in the afternoon can also help improve sleep quality.","questions":[{"id":1,"question":"What is the main idea of the passage?","options":["A. Sleep is not important for health","B. Sleep is essential and lack of it causes problems","C. Everyone should sleep more than 10 hours","D. Only children need enough sleep"],"answer":"B","analysis":"文章主要讲述了睡眠对健康的重要性以及睡眠不足带来的问题"},{"id":2,"question":"How many hours of sleep do adults need according to the passage?","options":["A. 5-6 hours","B. 7-9 hours","C. 10-12 hours","D. Less than 7 hours"],"answer":"B","analysis":"文中明确提到 adults need between 7 and 9 hours of sleep each night"}]}
+      ]
+    };
+
+    const writingData = {
+      exercises: [
+        {"id":"w1","type":"argumentative","title":"The Importance of Learning English","requirements":"请以\"学习英语的重要性\"为题，写一篇 120-180 词的议论文。","keywords":["globalization", "communication", "career", "opportunity"],"sampleEssay":"Nowadays, English has become a hot topic in our society. With the development of globalization, English plays an increasingly important role in our daily life.\n\nFirst and foremost, English is widely used in international communication. As the most common language in the world, it enables people from different countries to communicate effectively. Furthermore, learning English can help us access more knowledge and information, as most academic papers and online resources are written in English. Last but not least, English proficiency can significantly improve our career prospects, as many multinational companies require employees who can speak English fluently.\n\nIn conclusion, learning English is of great significance to everyone. We should seize every opportunity to improve our English skills and broaden our horizons.","wordCount":126}
+      ]
+    };
+
+    // ============== 状态 ==============
+    let currentTab = 'listening';
+    let currentModule = null;
+    let currentIndex = 0;
+    let selectedAnswer = null;
+    let submitted = false;
+    let userAnswers = [];
+    let writingContent = '';
+    let showSample = false;
+
+    // ============== 渲染函数 ==============
+    function render() {
+      const content = document.getElementById('content');
+      
+      if (currentTab === 'listening') {
+        if (currentModule) {
+          content.innerHTML = renderListeningPractice();
+        } else {
+          content.innerHTML = renderListeningHome();
+        }
+      } else if (currentTab === 'reading') {
+        if (currentModule) {
+          content.innerHTML = renderReadingPractice();
+        } else {
+          content.innerHTML = renderReadingHome();
+        }
+      } else if (currentTab === 'writing') {
+        content.innerHTML = renderWriting();
+      }
+    }
+
+    function renderListeningHome() {
+      return `
+        <div class="module-selector">
+          <div class="module-card" onclick="selectModule('short-dialog')"><h3>短对话</h3><p>5 道题</p></div>
+          <div class="module-card" onclick="selectModule('long-dialog')"><h3>长对话</h3><p>1 篇</p></div>
+          <div class="module-card" onclick="selectModule('passage')"><h3>短文听力</h3><p>1 篇</p></div>
+        </div>
+        <div class="filter-section">
+          <button class="filter-btn active" onclick="setFilter('all')">全部</button>
+          <button class="filter-btn" onclick="setFilter('short-dialog')">短对话</button>
+          <button class="filter-btn" onclick="setFilter('long-dialog')">长对话</button>
+          <button class="filter-btn" onclick="setFilter('passage')">短文</button>
+        </div>
+        ${renderQuestionList()}
+      `;
+    }
+
+    function renderQuestionList() {
+      const allQuestions = [...listeningData['short-dialog'].map(q => ({...q, type: 'short-dialog'})), ...listeningData['long-dialog'].map(q => ({...q, type: 'long-dialog'})), ...listeningData['passage'].map(q => ({...q, type: 'passage'}))];
+      return `<div class="question-list">${allQuestions.map((q, i) => `<div class="question-item" onclick="selectQuestion(${i})"><span>${q.type === 'short-dialog' ? '短对话' : q.type === 'long-dialog' ? '长对话' : '短文'} - ${i + 1}</span></div>`).join('')}</div>`;
+    }
+
+    function renderListeningPractice() {
+      const questions = listeningData[currentModule] || [];
+      const question = questions[currentIndex];
+      if (!question) return '<div class="empty-state"><h3>暂无题目</h3></div>';
+
+      const contentText = question.dialogue || question.passage;
+      const currentQuestion = question.type === 'short-dialog' ? question : (question.questions ? question.questions[0] : null);
+      const questionText = question.type === 'short-dialog' ? question.question : `问题 1/${question.questions.length}: ${question.questions[0].question}`;
+      const options = question.type === 'short-dialog' ? question.options : question.questions[0].options;
+      const correctAnswer = question.type === 'short-dialog' ? question.answer : question.questions[0].answer;
+      const analysis = question.type === 'short-dialog' ? question.analysis : question.questions[0].analysis;
+
+      return `
+        <div class="practice-area">
+          <button class="back-btn" onclick="backToList()">← 返回列表</button>
+          <div class="content-display">${contentText}</div>
+          <div class="question-text">${questionText}</div>
+          <div class="options-list">
+            ${options.map((opt, i) => {
+              const label = String.fromCharCode(65 + i);
+              const isSelected = selectedAnswer === label;
+              let className = 'option-item';
+              if (submitted) {
+                if (label === correctAnswer) className += ' correct';
+                else if (isSelected) className += ' incorrect';
+              } else if (isSelected) {
+                className += ' selected';
+              }
+              return `<div class="${className}" onclick="selectAnswer('${label}')"><div class="option-label">${label}</div><div>${opt}</div></div>`;
+            }).join('')}
+          </div>
+          ${submitted ? `
+            <div class="feedback-section ${selectedAnswer === correctAnswer ? 'correct' : 'incorrect'}">
+              <div class="feedback-title">${selectedAnswer === correctAnswer ? '✓ 回答正确！' : '✗ 回答错误'}</div>
+              <div class="feedback-analysis"><strong>正确答案：</strong> ${correctAnswer}<br><strong>解析：</strong> ${analysis}</div>
+            </div>
+          ` : ''}
+          <div class="action-buttons">
+            ${!submitted ? `<button class="btn btn-primary" onclick="submitAnswer()" ${!selectedAnswer ? 'disabled' : ''}>提交答案</button>` : `<button class="btn btn-primary" onclick="nextQuestion()">下一题</button>`}
+            <button class="btn btn-secondary" onclick="backToModules()">返回模块选择</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderReadingHome() {
+      return `
+        <div class="module-selector">
+          <div class="module-card" onclick="selectReadingModule('careful-reading')"><h3>仔细阅读</h3><p>1 篇</p></div>
+        </div>
+        ${renderReadingList()}
+      `;
+    }
+
+    function renderReadingList() {
+      const allQuestions = [...readingData['careful-reading'].map(q => ({...q, type: 'careful-reading'}))];
+      return `<div class="question-list">${allQuestions.map((q, i) => `<div class="question-item" onclick="selectReadingQuestion(${i})"><span>仔细阅读 - ${q.title}</span></div>`).join('')}</div>`;
+    }
+
+    function renderReadingPractice() {
+      const questions = readingData['careful-reading'] || [];
+      const question = questions[currentIndex];
+      if (!question) return '<div class="empty-state"><h3>暂无题目</h3></div>';
+
+      return `
+        <div class="practice-area">
+          <button class="back-btn" onclick="backToReadingList()">← 返回列表</button>
+          <div class="content-display"><h3 style="margin-bottom:12px">${question.title}</h3>${question.passage}</div>
+          <div class="question-list" style="margin-top:20px">
+            ${question.questions.map((q, qi) => `
+              <div style="background:white;padding:16px;border-radius:8px;margin-bottom:16px">
+                <p style="font-weight:600;margin-bottom:12px">${qi + 1}. ${q.question}</p>
+                <div class="options-list">
+                  ${q.options.map((opt, oi) => {
+                    const label = opt.charAt(0);
+                    return `<div class="option-item" onclick="selectReadingAnswer(${qi}, '${label}')"><div class="option-label">${label}</div><div>${opt.substring(3)}</div></div>`;
+                  }).join('')}
+                </div>
+              </div>
+            `).join('')}
+          </div>
+          <div class="action-buttons">
+            <button class="btn btn-primary" onclick="backToReadingList()">完成</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderWriting() {
+      if (writingData.exercises[currentModule] !== undefined) {
+        const ex = writingData.exercises[currentModule];
+        return `
+          <div class="practice-area">
+            <button class="back-btn" onclick="backToWritingList()">← 返回列表</button>
+            <div class="content-display">
+              <h3 style="margin-bottom:12px">${ex.title}</h3>
+              <p>${ex.requirements}</p>
+            </div>
+            <div style="margin-bottom:12px"><p><strong>关键词：</strong>${ex.keywords.join(', ')}</p></div>
+            <textarea class="writing-input" placeholder="在此输入你的作文..." oninput="updateWritingContent(this.value)">${writingContent}</textarea>
+            <div class="word-count">已输入 ${writingContent.split(/\s+/).filter(w => w).length} 词（建议 120-180 词）</div>
+            <div class="action-buttons">
+              <button class="btn btn-primary" onclick="toggleSample()">${showSample ? '隐藏范文' : '查看范文'}</button>
+              <button class="btn btn-secondary" onclick="clearWriting()">清空内容</button>
+            </div>
+            ${showSample ? `
+              <div class="content-display" style="margin-top:20px;background:#e8f5e9;border-left-color:#4caf50">
+                <h4 style="margin-bottom:12px">📝 参考范文（${ex.wordCount}词）</h4>
+                <p>${ex.sampleEssay}</p>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }
+      return `
+        <div class="module-selector">
+          <div class="module-card" onclick="selectWritingExercise(0)"><h3>议论文</h3><p>观点论述型作文</p></div>
+        </div>
+        <div class="question-list">
+          ${writingData.exercises.map((ex, i) => `<div class="question-item" onclick="selectWritingExercise(${i})"><span>议论文 - ${ex.title}</span><span style="font-size:12px;color:#666">${ex.wordCount}词</span></div>`).join('')}
+        </div>
+      `;
+    }
+
+    // ============== 事件处理 ==============
+    function switchTab(tab) {
+      currentTab = tab;
+      currentModule = null;
+      currentIndex = 0;
+      selectedAnswer = null;
+      submitted = false;
+      document.querySelectorAll('.nav-tab').forEach((t, i) => {
+        t.classList.toggle('active', ['listening','reading','writing'][i] === tab);
+      });
+      render();
+    }
+
+    function selectModule(module) {
+      currentModule = module;
+      currentIndex = 0;
+      selectedAnswer = null;
+      submitted = false;
+      render();
+    }
+
+    function selectQuestion(index) {
+      currentIndex = index;
+      selectedAnswer = null;
+      submitted = false;
+      render();
+    }
+
+    function selectAnswer(answer) {
+      if (submitted) return;
+      selectedAnswer = answer;
+      render();
+    }
+
+    function submitAnswer() {
+      submitted = true;
+      render();
+    }
+
+    function nextQuestion() {
+      const questions = listeningData[currentModule] || [];
+      if (currentIndex < questions.length - 1) {
+        currentIndex++;
+        selectedAnswer = null;
+        submitted = false;
+        render();
+      } else {
+        backToList();
+      }
+    }
+
+    function backToList() {
+      currentModule = null;
+      currentIndex = 0;
+      selectedAnswer = null;
+      submitted = false;
+      render();
+    }
+
+    function backToModules() {
+      currentModule = null;
+      currentIndex = 0;
+      selectedAnswer = null;
+      submitted = false;
+      render();
+    }
+
+    function setFilter(type) {
+      // 简化版本，暂不实现筛选
+    }
+
+    function selectReadingModule(module) {
+      currentModule = module;
+      currentIndex = 0;
+      render();
+    }
+
+    function selectReadingQuestion(index) {
+      currentIndex = index;
+      render();
+    }
+
+    function backToReadingList() {
+      currentModule = null;
+      currentIndex = 0;
+      render();
+    }
+
+    function selectWritingExercise(index) {
+      currentModule = index;
+      writingContent = '';
+      showSample = false;
+      render();
+    }
+
+    function backToWritingList() {
+      currentModule = null;
+      writingContent = '';
+      showSample = false;
+      render();
+    }
+
+    function updateWritingContent(content) {
+      writingContent = content;
+      render();
+    }
+
+    function toggleSample() {
+      showSample = !showSample;
+      render();
+    }
+
+    function clearWriting() {
+      writingContent = '';
+      showSample = false;
+      render();
+    }
+
+    // ============== 初始化 ==============
+    render();
+  </script>
+</body>
 </html>
