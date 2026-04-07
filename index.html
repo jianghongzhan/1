@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>四级备考助手 - CET-4 Learning Platform</title>
+  <title>CET-4 英语学习平台 - 四级备考助手</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
@@ -91,32 +91,51 @@
   </div>
 
   <script>
-    // ============== 数据 ==============
+    // ============== 听力数据 ==============
     const listeningData = {
       "short-dialog": [
         {"id":"s1","dialogue":"M: Can I help you?\nW: Yes, I'm looking for a book on history.","question":"What is the woman looking for?","options":["A book on science","A book on history","A dictionary","A magazine"],"answer":"B","analysis":"关键词 'book on history' 直接回答了问题"},
         {"id":"s2","dialogue":"M: What time is it now?\nW: It's 7:30. The movie starts at 8:00.","question":"How much time do they have before the movie?","options":["15 minutes","30 minutes","45 minutes","60 minutes"],"answer":"B","analysis":"8:00 - 7:30 = 30 分钟"},
         {"id":"s3","dialogue":"W: I'm so tired. I stayed up late last night.\nM: You should go to bed earlier tonight.","question":"What does the man suggest?","options":["Watch a movie","Go to bed earlier","Drink coffee","Take a nap"],"answer":"B","analysis":"男士建议女士今晚早点睡觉"},
         {"id":"s4","dialogue":"M: How do you usually go to work?\nW: I take the subway. It's faster than the bus.","question":"Why does the woman take the subway?","options":["It's cheaper","It's faster","It's more comfortable","It's closer"],"answer":"B","analysis":"女士明确说 'It's faster than the bus'"},
-        {"id":"s5","dialogue":"W: Did you finish your homework?\nM: Not yet. I'll do it after dinner.","question":"When will the man do his homework?","options":["Before dinner","After dinner","Tomorrow","Later tonight"],"answer":"B","analysis":"男士说 'I'll do it after dinner'"}
+        {"id":"s5","dialogue":"W: Did you finish your homework?\nM: Not yet. I'll do it after dinner.","question":"When will the man do his homework?","options":["Before dinner","After dinner","Tomorrow","Later tonight"],"answer":"B","analysis":"男士说 'I'll do it after dinner'"},
+        {"id":"s6","dialogue":"M: Would you like some coffee?\nW: No, thanks. I prefer tea.","question":"What does the woman prefer?","options":["Coffee","Tea","Water","Juice"],"answer":"B","analysis":"女士说 'I prefer tea'"},
+        {"id":"s7","dialogue":"W: How was your trip to Beijing?\nM: It was wonderful. I visited the Great Wall.","question":"What did the man visit?","options":["The Summer Palace","The Great Wall","The Forbidden City","Tiananmen Square"],"answer":"B","analysis":"男士说 'I visited the Great Wall'"},
+        {"id":"s8","dialogue":"M: Are you free this weekend?\nW: Sorry, I have to prepare for an exam.","question":"What will the woman do this weekend?","options":["Go shopping","Prepare for an exam","Visit friends","Watch a movie"],"answer":"B","analysis":"女士说 'I have to prepare for an exam'"},
+        {"id":"s9","dialogue":"W: What's your major?\nM: I'm studying computer science.","question":"What is the man's major?","options":["English","Computer Science","Mathematics","Physics"],"answer":"B","analysis":"男士说 'I'm studying computer science'"},
+        {"id":"s10","dialogue":"M: Do you like playing basketball?\nW: Yes, I play it every weekend.","question":"How often does the woman play basketball?","options":["Every day","Every week","Every weekend","Every month"],"answer":"C","analysis":"女士说 'I play it every weekend'"}
       ],
       "long-dialog": [
-        {"id":"l1","dialogue":"W: Good morning. I'd like to inquire about the English course.\nM: Good morning. We have several courses available. What level are you looking for?\nW: I'm a beginner. I want to improve my speaking skills.\nM: Then I recommend our Basic English Communication course. It starts next Monday.\nW: That sounds good. How many students are there in one class?\nM: Usually around 15 students. This ensures everyone gets enough practice time.\nW: Perfect. How much is the course fee?\nM: It's 2000 yuan for 12 weeks. And we offer a free trial class.\nW: Great! I'd like to sign up for the trial class first.\nM: No problem. Let me get your information.","questions":[{"question":"What does the woman want to improve?","options":["Writing skills","Speaking skills","Listening skills","Reading skills"],"answer":"B","analysis":"女士说 'I want to improve my speaking skills'"},{"question":"How many students are in one class?","options":["About 10","About 15","About 20","About 25"],"answer":"B","analysis":"男士说 'Usually around 15 students'"},{"question":"How much is the course fee?","options":["1000 yuan","1500 yuan","2000 yuan","2500 yuan"],"answer":"C","analysis":"男士说 'It's 2000 yuan for 12 weeks'"}]}
+        {"id":"l1","dialogue":"W: Good morning. I'd like to inquire about the English course.\nM: Good morning. We have several courses available. What level are you looking for?\nW: I'm a beginner. I want to improve my speaking skills.\nM: Then I recommend our Basic English Communication course. It starts next Monday.\nW: That sounds good. How many students are there in one class?\nM: Usually around 15 students. This ensures everyone gets enough practice time.\nW: Perfect. How much is the course fee?\nM: It's 2000 yuan for 12 weeks. And we offer a free trial class.\nW: Great! I'd like to sign up for the trial class first.\nM: No problem. Let me get your information.","questions":[{"question":"What does the woman want to improve?","options":["Writing skills","Speaking skills","Listening skills","Reading skills"],"answer":"B","analysis":"女士说 'I want to improve my speaking skills'"},{"question":"How many students are in one class?","options":["About 10","About 15","About 20","About 25"],"answer":"B","analysis":"男士说 'Usually around 15 students'"},{"question":"How much is the course fee?","options":["1000 yuan","1500 yuan","2000 yuan","2500 yuan"],"answer":"C","analysis":"男士说 'It's 2000 yuan for 12 weeks'"}]},
+        {"id":"l2","dialogue":"M: Hi, Lucy. You look worried. What's wrong?\nW: I'm thinking about which course to choose next semester.\nM: What are your options?\nW: Well, I can choose between Marketing and Human Resources. I'm interested in both.\nM: Have you talked to your academic advisor?\nW: Yes, she suggested Marketing because it has more job opportunities.\nM: That sounds reasonable. But you should also consider your own interest.\nW: You're right. I need to think about it carefully.\nM: Why not talk to some seniors who have taken these courses?\nW: Good idea! I'll do that this weekend.","questions":[{"question":"What is the woman worried about?","options":["Her grades","Choosing a course","Finding a job","Talking to advisor"],"answer":"B","analysis":"女士说 'I'm thinking about which course to choose'"},{"question":"Which course does the advisor suggest?","options":["Human Resources","Marketing","Finance","Management"],"answer":"B","analysis":"女士说 'she suggested Marketing'"},{"question":"What will the woman do this weekend?","options":["Choose a course","Talk to seniors","Meet the advisor","Study for exam"],"answer":"B","analysis":"女士说 'I'll do that this weekend'，指和学长学姐交流"}]}
       ],
       "passage": [
-        {"id":"p1","passage":"Sleep is essential for our health and well-being. Studies have shown that people who get enough sleep are more productive, have better memory, and are less likely to get sick. However, in today's fast-paced world, many people sacrifice sleep to get more work done. According to research, adults need between 7 and 9 hours of sleep each night. Unfortunately, about one-third of adults report getting less than 7 hours of sleep. This lack of sleep can lead to serious health problems, including heart disease, diabetes, and obesity. Experts recommend establishing a regular sleep schedule and avoiding screens before bedtime.","questions":[{"question":"What is the main idea of the passage?","options":["Sleep is not important","Sleep is essential and lack of it causes problems","Everyone should sleep more than 10 hours","Only children need enough sleep"],"answer":"B","analysis":"文章主要讲述了睡眠对健康的重要性以及睡眠不足带来的问题"},{"question":"How many hours of sleep do adults need?","options":["5-6 hours","7-9 hours","10-12 hours","Less than 7 hours"],"answer":"B","analysis":"文中明确提到 adults need between 7 and 9 hours"}]}
+        {"id":"p1","passage":"Sleep is essential for our health and well-being. Studies have shown that people who get enough sleep are more productive, have better memory, and are less likely to get sick. However, in today's fast-paced world, many people sacrifice sleep to get more work done.\n\nAccording to research, adults need between 7 and 9 hours of sleep each night. Unfortunately, about one-third of adults report getting less than 7 hours of sleep. This lack of sleep can lead to serious health problems, including heart disease, diabetes, and obesity.\n\nExperts recommend establishing a regular sleep schedule and avoiding screens before bedtime. Creating a comfortable sleep environment and avoiding caffeine in the afternoon can also help improve sleep quality.","questions":[{"question":"What is the main idea of the passage?","options":["Sleep is not important","Sleep is essential and lack of it causes problems","Everyone should sleep more than 10 hours","Only children need enough sleep"],"answer":"B","analysis":"文章主要讲述了睡眠对健康的重要性以及睡眠不足带来的问题"},{"question":"How many hours of sleep do adults need?","options":["5-6 hours","7-9 hours","10-12 hours","Less than 7 hours"],"answer":"B","analysis":"文中明确提到 adults need between 7 and 9 hours"},{"question":"What health problems can lack of sleep cause?","options":["Only cold","Heart disease, diabetes, obesity","Only headache","No problems"],"answer":"B","analysis":"文中提到 heart disease, diabetes, and obesity"}]},
+        {"id":"p2","passage":"The Internet has changed the way we communicate and access information. With just a few clicks, we can connect with people around the world, shop online, and find answers to almost any question.\n\nHowever, the Internet also has its downsides. Privacy concerns, cybercrime, and the spread of misinformation are serious issues that need to be addressed. Many people spend too much time online, which can affect their real-life relationships and mental health.\n\nDespite these challenges, the Internet remains an invaluable tool. The key is to use it wisely and maintain a healthy balance between online and offline activities.","questions":[{"question":"What is the main advantage of the Internet?","options":["It's cheap","It connects people and provides information","It's fast","It's entertaining"],"answer":"B","analysis":"文章提到 connect with people 和 find answers"},
+        {"question":"What is NOT mentioned as a downside of the Internet?","options":["Privacy concerns","Cybercrime","Misinformation","High cost"],"answer":"D","analysis":"文章没有提到高成本问题"},
+        {"question":"What does the author suggest?","options":["Stop using the Internet","Use it wisely and maintain balance","Use it more often","Avoid online shopping"],"answer":"B","analysis":"文章最后说 use it wisely and maintain a healthy balance"}]}
       ]
     };
 
+    // ============== 阅读数据 ==============
     const readingData = {
       "careful-reading": [
-        {"id":"r1","title":"The Importance of Sleep","passage":"Sleep is essential for our health and well-being. Studies have shown that people who get enough sleep are more productive, have better memory, and are less likely to get sick. However, in today's fast-paced world, many people sacrifice sleep to get more work done.\n\nAccording to research, adults need between 7 and 9 hours of sleep each night. Unfortunately, about one-third of adults report getting less than 7 hours of sleep. This lack of sleep can lead to serious health problems, including heart disease, diabetes, and obesity.\n\nExperts recommend establishing a regular sleep schedule and avoiding screens before bedtime. Creating a comfortable sleep environment and avoiding caffeine in the afternoon can also help improve sleep quality.","questions":[{"id":1,"question":"What is the main idea of the passage?","options":["A. Sleep is not important for health","B. Sleep is essential and lack of it causes problems","C. Everyone should sleep more than 10 hours","D. Only children need enough sleep"],"answer":"B","analysis":"文章主要讲述了睡眠对健康的重要性以及睡眠不足带来的问题"},{"id":2,"question":"How many hours of sleep do adults need according to the passage?","options":["A. 5-6 hours","B. 7-9 hours","C. 10-12 hours","D. Less than 7 hours"],"answer":"B","analysis":"文中明确提到 adults need between 7 and 9 hours of sleep each night"}]}
+        {"id":"r1","title":"The Importance of Sleep","passage":"Sleep is essential for our health and well-being. Studies have shown that people who get enough sleep are more productive, have better memory, and are less likely to get sick. However, in today's fast-paced world, many people sacrifice sleep to get more work done.\n\nAccording to research, adults need between 7 and 9 hours of sleep each night. Unfortunately, about one-third of adults report getting less than 7 hours of sleep. This lack of sleep can lead to serious health problems, including heart disease, diabetes, and obesity.\n\nExperts recommend establishing a regular sleep schedule and avoiding screens before bedtime. Creating a comfortable sleep environment and avoiding caffeine in the afternoon can also help improve sleep quality.","questions":[{"id":1,"question":"What is the main idea of the passage?","options":["A. Sleep is not important for health","B. Sleep is essential and lack of it causes problems","C. Everyone should sleep more than 10 hours","D. Only children need enough sleep"],"answer":"B","analysis":"文章主要讲述了睡眠对健康的重要性以及睡眠不足带来的问题"},{"id":2,"question":"How many hours of sleep do adults need according to the passage?","options":["A. 5-6 hours","B. 7-9 hours","C. 10-12 hours","D. Less than 7 hours"],"answer":"B","analysis":"文中明确提到 adults need between 7 and 9 hours of sleep each night"},{"id":3,"question":"What percentage of adults get less than 7 hours of sleep?","options":["A. About 10%","B. About one-third","C. About half","D. About two-thirds"],"answer":"B","analysis":"文中提到 about one-third of adults report getting less than 7 hours"}]},
+        {"id":"r2","title":"Online Learning Revolution","passage":"The COVID-19 pandemic has accelerated the adoption of online learning worldwide. Schools and universities had to quickly adapt to remote teaching, and many students experienced online classes for the first time.\n\nWhile online learning offers flexibility and convenience, it also presents challenges. Some students struggle with self-discipline and time management without the structure of traditional classrooms. Additionally, not all students have access to reliable internet connections or suitable devices for learning.\n\nDespite these challenges, many educators believe that online learning will continue to grow even after the pandemic. The combination of online and in-person learning, known as hybrid learning, may become the new normal in education.","questions":[{"id":1,"question":"What caused the rapid growth of online learning?","options":["A. Government policy","B. COVID-19 pandemic","C. Student demand","D. Technology advancement"],"answer":"B","analysis":"文中明确提到 COVID-19 pandemic accelerated the adoption of online learning"},{"id":2,"question":"What is an advantage of online learning?","options":["A. Better social interaction","B. Flexibility and convenience","C. Lower cost","D. Easier exams"],"answer":"B","analysis":"文中提到 online learning offers flexibility and convenience"},{"id":3,"question":"What challenge do some students face?","options":["A. Too many breaks","B. Self-discipline and time management","C. Easy course content","D. Too much interaction"],"answer":"B","analysis":"文中提到 students struggle with self-discipline and time management"}]}
+      ],
+      "matching": [
+        {"id":"m1","title":"The Future of Work","paragraphs":[{"letter":"A","content":"The workplace is undergoing a dramatic transformation. Remote work, once considered a rare perk, has become mainstream."},{"letter":"B","content":"Artificial intelligence and automation are reshaping job requirements. While some fear job losses, experts predict new roles will be created."},{"letter":"C","content":"Soft skills like communication, creativity, and emotional intelligence are becoming increasingly valuable."},{"letter":"D","content":"The gig economy continues to grow, with more people working as freelancers or independent contractors."},{"letter":"E","content":"Companies are investing heavily in employee training and development. Continuous learning is no longer optional."}],"statements":[{"id":1,"statement":"Remote work has changed from being uncommon to being widely accepted.","answer":"A","analysis":"段落 A 提到 remote work, once considered a rare perk, has become mainstream"},{"id":2,"statement":"Human skills that machines cannot replace are becoming more important.","answer":"C","analysis":"段落 C 提到 Soft skills...are becoming increasingly valuable"},{"id":3,"statement":"More people are working independently rather than as traditional employees.","answer":"D","analysis":"段落 D 提到 gig economy 和 freelancers"}]}
+      ],
+      "banked-cloze": [
+        {"id":"c1","title":"Social Media Impact","passage":"Social media has ___1___ the way we communicate and share information. With billions of users worldwide, platforms like Facebook, Instagram, and Twitter have become an ___2___ part of daily life for many people.\n\nHowever, the impact of social media is not entirely positive. Studies have shown that ___3___ use of social media can lead to feelings of anxiety and depression. The ___4___ to compare oneself with others can negatively affect self-esteem.\n\nOn the other hand, social media has enabled people to stay ___5___ with friends and family across the globe. It has also become a powerful tool for businesses to reach customers and for social movements to gain ___6___.","wordBank":[{"letter":"A","word":"excessive"},{"letter":"B","word":"transformed"},{"letter":"C","word":"essential"},{"letter":"D","word":"connected"},{"letter":"E","word":"negative"},{"letter":"F","word":"wisely"},{"letter":"G","word":"visibility"},{"letter":"H","word":"tendency"}],"answers":[{"blank":1,"answer":"B","word":"transformed","analysis":"transformed the way... 改变了...的方式"},{"blank":2,"answer":"C","word":"essential","analysis":"an essential part 不可或缺的一部分"},{"blank":3,"answer":"A","word":"excessive","analysis":"excessive use 过度使用"},{"blank":4,"answer":"H","word":"tendency","analysis":"tendency to compare 比较的倾向"},{"blank":5,"answer":"D","word":"connected","analysis":"stay connected 保持联系"},{"blank":6,"answer":"G","word":"visibility","analysis":"gain visibility 获得关注/曝光度"}]}
       ]
     };
 
+    // ============== 写作数据 ==============
     const writingData = {
       exercises: [
-        {"id":"w1","type":"argumentative","title":"The Importance of Learning English","requirements":"请以\"学习英语的重要性\"为题，写一篇 120-180 词的议论文。","keywords":["globalization", "communication", "career", "opportunity"],"sampleEssay":"Nowadays, English has become a hot topic in our society. With the development of globalization, English plays an increasingly important role in our daily life.\n\nFirst and foremost, English is widely used in international communication. As the most common language in the world, it enables people from different countries to communicate effectively. Furthermore, learning English can help us access more knowledge and information, as most academic papers and online resources are written in English. Last but not least, English proficiency can significantly improve our career prospects, as many multinational companies require employees who can speak English fluently.\n\nIn conclusion, learning English is of great significance to everyone. We should seize every opportunity to improve our English skills and broaden our horizons.","wordCount":126}
+        {"id":"w1","type":"argumentative","title":"The Importance of Learning English","requirements":"请以\"学习英语的重要性\"为题，写一篇 120-180 词的议论文。","keywords":["globalization", "communication", "career", "opportunity"],"sampleEssay":"Nowadays, English has become a hot topic in our society. With the development of globalization, English plays an increasingly important role in our daily life.\n\nFirst and foremost, English is widely used in international communication. As the most common language in the world, it enables people from different countries to communicate effectively. Furthermore, learning English can help us access more knowledge and information, as most academic papers and online resources are written in English. Last but not least, English proficiency can significantly improve our career prospects, as many multinational companies require employees who can speak English fluently.\n\nIn conclusion, learning English is of great significance to everyone. We should seize every opportunity to improve our English skills and broaden our horizons.","wordCount":126},
+        {"id":"w2","type":"letter","title":"Letter of Application","requirements":"假设你是李华，看到某公司招聘实习生的广告，请写一封求职信（100-120 词）。","keywords":["apply for", "position", "qualification", "experience"],"sampleEssay":"Dear Sir/Madam,\n\nI am writing to apply for the position of intern advertised on your company website. I believe my qualifications and enthusiasm make me a suitable candidate for this position.\n\nI am currently a junior student majoring in Computer Science. During my university years, I have achieved excellent academic performance and participated in several programming competitions. I am proficient in Python, Java, and web development. Moreover, I am a quick learner with strong problem-solving skills and team spirit.\n\nI would appreciate the opportunity to discuss my application with you. I am available for an interview at your convenience. Thank you for your consideration.\n\nYours sincerely,\nLi Hua","wordCount":112}
       ]
     };
 
@@ -154,9 +173,9 @@
     function renderListeningHome() {
       return `
         <div class="module-selector">
-          <div class="module-card" onclick="selectModule('short-dialog')"><h3>短对话</h3><p>5 道题</p></div>
-          <div class="module-card" onclick="selectModule('long-dialog')"><h3>长对话</h3><p>1 篇</p></div>
-          <div class="module-card" onclick="selectModule('passage')"><h3>短文听力</h3><p>1 篇</p></div>
+          <div class="module-card" onclick="selectModule('short-dialog')"><h3>短对话</h3><p>10 道题</p></div>
+          <div class="module-card" onclick="selectModule('long-dialog')"><h3>长对话</h3><p>2 篇</p></div>
+          <div class="module-card" onclick="selectModule('passage')"><h3>短文听力</h3><p>2 篇</p></div>
         </div>
         <div class="filter-section">
           <button class="filter-btn active" onclick="setFilter('all')">全部</button>
@@ -221,44 +240,70 @@
     function renderReadingHome() {
       return `
         <div class="module-selector">
-          <div class="module-card" onclick="selectReadingModule('careful-reading')"><h3>仔细阅读</h3><p>1 篇</p></div>
+          <div class="module-card" onclick="selectReadingModule('careful-reading')"><h3>仔细阅读</h3><p>2 篇</p></div>
+          <div class="module-card" onclick="selectReadingModule('matching')"><h3>长篇匹配</h3><p>1 篇</p></div>
+          <div class="module-card" onclick="selectReadingModule('banked-cloze')"><h3>选词填空</h3><p>1 篇</p></div>
         </div>
         ${renderReadingList()}
       `;
     }
 
     function renderReadingList() {
-      const allQuestions = [...readingData['careful-reading'].map(q => ({...q, type: 'careful-reading'}))];
-      return `<div class="question-list">${allQuestions.map((q, i) => `<div class="question-item" onclick="selectReadingQuestion(${i})"><span>仔细阅读 - ${q.title}</span></div>`).join('')}</div>`;
+      const allQuestions = [...(readingData['careful-reading'] || []).map(q => ({...q, type: 'careful-reading'})), ...(readingData['matching'] || []).map(q => ({...q, type: 'matching'})), ...(readingData['banked-cloze'] || []).map(q => ({...q, type: 'banked-cloze'}))];
+      return `<div class="question-list">${allQuestions.map((q, i) => `<div class="question-item" onclick="selectReadingQuestion(${i})"><span>${q.type === 'careful-reading' ? '仔细阅读' : q.type === 'matching' ? '长篇匹配' : '选词填空'} - ${q.title || '练习'}</span></div>`).join('')}</div>`;
     }
 
     function renderReadingPractice() {
-      const questions = readingData['careful-reading'] || [];
+      const questions = readingData[currentModule] || [];
       const question = questions[currentIndex];
       if (!question) return '<div class="empty-state"><h3>暂无题目</h3></div>';
 
-      return `
-        <div class="practice-area">
-          <button class="back-btn" onclick="backToReadingList()">← 返回列表</button>
-          <div class="content-display"><h3 style="margin-bottom:12px">${question.title}</h3>${question.passage}</div>
-          <div class="question-list" style="margin-top:20px">
-            ${question.questions.map((q, qi) => `
-              <div style="background:white;padding:16px;border-radius:8px;margin-bottom:16px">
-                <p style="font-weight:600;margin-bottom:12px">${qi + 1}. ${q.question}</p>
-                <div class="options-list">
-                  ${q.options.map((opt, oi) => {
-                    const label = opt.charAt(0);
-                    return `<div class="option-item" onclick="selectReadingAnswer(${qi}, '${label}')"><div class="option-label">${label}</div><div>${opt.substring(3)}</div></div>`;
-                  }).join('')}
+      if (currentModule === 'careful-reading') {
+        return `
+          <div class="practice-area">
+            <button class="back-btn" onclick="backToReadingList()">← 返回列表</button>
+            <div class="content-display"><h3 style="margin-bottom:12px">${question.title}</h3>${question.passage}</div>
+            <div class="question-list" style="margin-top:20px">
+              ${question.questions.map((q, qi) => `
+                <div style="background:white;padding:16px;border-radius:8px;margin-bottom:16px">
+                  <p style="font-weight:600;margin-bottom:12px">${qi + 1}. ${q.question}</p>
+                  <div class="options-list">
+                    ${q.options.map((opt, oi) => {
+                      const label = opt.charAt(0);
+                      return `<div class="option-item" onclick="alert('阅读模块答案验证功能待完善')"><div class="option-label">${label}</div><div>${opt.substring(3)}</div></div>`;
+                    }).join('')}
+                  </div>
                 </div>
-              </div>
-            `).join('')}
+              `).join('')}
+            </div>
+            <div class="action-buttons">
+              <button class="btn btn-primary" onclick="backToReadingList()">完成</button>
+            </div>
           </div>
-          <div class="action-buttons">
-            <button class="btn btn-primary" onclick="backToReadingList()">完成</button>
+        `;
+      } else if (currentModule === 'matching') {
+        return `
+          <div class="practice-area">
+            <button class="back-btn" onclick="backToReadingList()">← 返回列表</button>
+            <div class="content-display">${question.paragraphs.map(p => `<p><strong>段落${p.letter}:</strong> ${p.content}</p>`).join('')}</div>
+            <div class="question-list">
+              ${question.statements.map((s, i) => `<div class="question-item"><span>${i+1}. ${s.statement}</span><span class="status correct">答案：段落${s.answer}</span></div>`).join('')}
+            </div>
           </div>
-        </div>
-      `;
+        `;
+      } else if (currentModule === 'banked-cloze') {
+        return `
+          <div class="practice-area">
+            <button class="back-btn" onclick="backToReadingList()">← 返回列表</button>
+            <div class="content-display">${question.passage}</div>
+            <div style="margin-bottom:16px"><strong>词库：</strong>${question.wordBank.map(w => `${w.letter}. ${w.word}`).join(', ')}</div>
+            <div class="question-list">
+              ${question.answers.map((a, i) => `<div class="question-item"><span>第${a.blank}空</span><span class="status correct">答案：${a.answer} (${a.word})</span></div>`).join('')}
+            </div>
+          </div>
+        `;
+      }
+      return '<div class="empty-state"><h3>暂无题目</h3></div>';
     }
 
     function renderWriting() {
@@ -290,9 +335,10 @@
       return `
         <div class="module-selector">
           <div class="module-card" onclick="selectWritingExercise(0)"><h3>议论文</h3><p>观点论述型作文</p></div>
+          <div class="module-card" onclick="selectWritingExercise(1)"><h3>应用文</h3><p>书信/通知等</p></div>
         </div>
         <div class="question-list">
-          ${writingData.exercises.map((ex, i) => `<div class="question-item" onclick="selectWritingExercise(${i})"><span>议论文 - ${ex.title}</span><span style="font-size:12px;color:#666">${ex.wordCount}词</span></div>`).join('')}
+          ${writingData.exercises.map((ex, i) => `<div class="question-item" onclick="selectWritingExercise(${i})"><span>${ex.type === 'argumentative' ? '议论文' : '应用文'} - ${ex.title}</span><span style="font-size:12px;color:#666">${ex.wordCount}词</span></div>`).join('')}
         </div>
       `;
     }
@@ -365,7 +411,8 @@
     }
 
     function setFilter(type) {
-      // 简化版本，暂不实现筛选
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
     }
 
     function selectReadingModule(module) {
