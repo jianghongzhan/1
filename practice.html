@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>真题练习 - 四级复习突击</title>
+  <meta name="description" content="四级真题在线练习，包含听力、阅读、写作、翻译真题及详细解析">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>">
+  <link rel="stylesheet" href="css/minimal.css">
+  <style>
+    .practice-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .practice-tab {
+      padding: 10px 20px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      background: var(--card);
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+    .practice-tab:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    .practice-tab.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+    .question-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .question-type {
+      background: var(--accent);
+      color: var(--primary);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .question-text {
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .option {
+      padding: 14px 18px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .option:hover {
+      border-color: var(--primary);
+      background: rgba(99, 102, 241, 0.05);
+    }
+    .option.selected {
+      border-color: var(--primary);
+      background: rgba(99, 102, 241, 0.1);
+    }
+    .option.correct {
+      border-color: #22c55e;
+      background: rgba(34, 197, 94, 0.1);
+    }
+    .option.wrong {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+    }
+    .option-letter {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .analysis-box {
+      margin-top: 16px;
+      padding: 16px;
+      background: rgba(99, 102, 241, 0.05);
+      border-radius: 8px;
+      border-left: 4px solid var(--primary);
+      display: none;
+    }
+    .analysis-box.show {
+      display: block;
+    }
+    .script-box {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+    .word-bank {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .word-item {
+      padding: 8px 16px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .word-item:hover {
+      background: var(--accent);
+    }
+    .blank {
+      display: inline-block;
+      min-width: 100px;
+      border-bottom: 2px solid var(--primary);
+      margin: 0 4px;
+      text-align: center;
+    }
+    .score-display {
+      text-align: center;
+      padding: 40px;
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      border-radius: 16px;
+      color: white;
+      margin-bottom: 30px;
+    }
+    .score-value {
+      font-size: 64px;
+      font-weight: 700;
+    }
+    .passage-text {
+      line-height: 2;
+      font-size: 15px;
+    }
+    .passage-paragraph {
+      margin-bottom: 16px;
+    }
+    .paragraph-label {
+      font-weight: 600;
+      color: var(--primary);
+      margin-right: 8px;
+    }
+    .translation-source {
+      background: #fef3c7;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      line-height: 2;
+    }
+    .translation-reference {
+      background: #dcfce7;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      line-height: 2;
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-container">
+      <a href="/" class="nav-brand">四级真题工坊</a>
+      <div class="nav-links">
+        <a href="learn.html" class="nav-link">学习</a>
+        <a href="practice.html" class="nav-link" style="color: var(--primary);">练习</a>
+        <a href="flashcard.html" class="nav-link">闪卡</a>
+        <a href="vocabulary.html" class="nav-link">词汇</a>
+        <a href="progress.html" class="nav-link">进度</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container" style="padding-top: 100px;">
+    <h1 style="text-align: center; margin-bottom: 8px;">真题练习</h1>
+    <p style="text-align: center; color: var(--muted); margin-bottom: 32px;">历年真题精选，包含详细解析</p>
+
+    <div class="practice-tabs" id="mainTabs">
+      <div class="practice-tab active" data-tab="listening">🎧 听力</div>
+      <div class="practice-tab" data-tab="reading">📖 阅读</div>
+      <div class="practice-tab" data-tab="writing">✍️ 写作</div>
+      <div class="practice-tab" data-tab="translation">🌐 翻译</div>
+    </div>
+
+    <div id="contentArea"></div>
+  </div>
+
+  <script src="js/practiceData.js"></script>
+  <script>
+    // 初始化
+    document.addEventListener('DOMContentLoaded', () => {
+      renderListening();
+
+      // 主标签切换
+      document.querySelectorAll('#mainTabs .practice-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('#mainTabs .practice-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+
+          const tabName = tab.dataset.tab;
+          switch(tabName) {
+            case 'listening': renderListening(); break;
+            case 'reading': renderReading(); break;
+            case 'writing': renderWriting(); break;
+            case 'translation': renderTranslation(); break;
+          }
+        });
+      });
+    });
+
+    // 渲染听力
+    function renderListening() {
+      const content = document.getElementById('contentArea');
+      content.innerHTML = `
+        <div class="practice-tabs" id="listeningTabs">
+          <div class="practice-tab active" data-type="shortNews">短篇新闻</div>
+          <div class="practice-tab" data-type="longDialogue">长对话</div>
+          <div class="practice-tab" data-type="passage">听力篇章</div>
+        </div>
+        <div id="listeningContent"></div>
+      `;
+
+      renderListeningType('shortNews');
+
+      document.querySelectorAll('#listeningTabs .practice-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('#listeningTabs .practice-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          renderListeningType(tab.dataset.type);
+        });
+      });
+    }
+
+    function renderListeningType(type) {
+      const container = document.getElementById('listeningContent');
+      const data = PracticeData.listening[type];
+
+      if (!data || data.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: var(--muted); padding: 40px;">暂无练习题</p>';
+        return;
+      }
+
+      container.innerHTML = data.map((item, idx) => `
+        <div class="question-card">
+          <div class="question-header">
+            <h3 style="margin: 0;">${item.title}</h3>
+            <span class="question-type">听力</span>
+          </div>
+          <div class="script-box">
+            <strong>听力原文：</strong><br>${item.script}
+          </div>
+          ${item.questions.map((q, qIdx) => `
+            <div class="question-item" data-question="${idx}-${qIdx}">
+              <p class="question-text"><strong>Q${qIdx + 1}.</strong> ${q.q}</p>
+              <div class="options">
+                ${q.options.map((opt, optIdx) => `
+                  <div class="option" data-answer="${q.answer}" data-opt="${optIdx}" onclick="selectOption(this, '${idx}-${qIdx}')">
+                    <span class="option-letter">${String.fromCharCode(65 + optIdx)}</span>
+                    <span>${opt}</span>
+                  </div>
+                `).join('')}
+              </div>
+              <div class="analysis-box" id="analysis-${idx}-${qIdx}">
+                <strong>💡 解析：</strong>${q.analysis}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `).join('');
+    }
+
+    // 渲染阅读
+    function renderReading() {
+      const content = document.getElementById('contentArea');
+      content.innerHTML = `
+        <div class="practice-tabs" id="readingTabs">
+          <div class="practice-tab active" data-type="vocabulary">选词填空</div>
+          <div class="practice-tab" data-type="matching">信息匹配</div>
+          <div class="practice-tab" data-type="carefulReading">仔细阅读</div>
+        </div>
+        <div id="readingContent"></div>
+      `;
+
+      renderReadingType('vocabulary');
+
+      document.querySelectorAll('#readingTabs .practice-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('#readingTabs .practice-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          renderReadingType(tab.dataset.type);
+        });
+      });
+    }
+
+    function renderReadingType(type) {
+      const container = document.getElementById('readingContent');
+      const data = PracticeData.reading[type];
+
+      if (!data || data.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: var(--muted); padding: 40px;">暂无练习题</p>';
+        return;
+      }
+
+      if (type === 'vocabulary') {
+        renderVocabulary(data, container);
+      } else if (type === 'matching') {
+        renderMatching(data, container);
+      } else {
+        renderCarefulReading(data, container);
+      }
+    }
+
+    function renderVocabulary(data, container) {
+      container.innerHTML = data.map((item, idx) => `
+        <div class="question-card">
+          <div class="question-header">
+            <h3 style="margin: 0;">${item.title}</h3>
+            <span class="question-type">选词填空</span>
+          </div>
+          <div class="word-bank">
+            ${item.wordBank.map(w => `
+              <div class="word-item" title="${w.meaning}">
+                <strong>${w.word}</strong> <span style="color: var(--muted);">${w.pos}</span>
+              </div>
+            `).join('')}
+          </div>
+          <div class="passage-text">
+            ${item.passage.replace(/__(\d+)__/g, '<span class="blank" id="blank-$1">______$1</span>')}
+          </div>
+          <div style="margin-top: 24px;">
+            <h4>答案解析：</h4>
+            ${item.answers.map(a => `
+              <div style="margin: 12px 0; padding: 12px; background: var(--card); border-radius: 8px; border-left: 3px solid var(--primary);">
+                <strong>空格 ${a.blank}：</strong><span style="color: var(--primary);">${a.answer}</span>
+                <p style="margin: 8px 0 0 0; color: var(--muted); font-size: 14px;">${a.analysis}</p>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderMatching(data, container) {
+      container.innerHTML = data.map((item, idx) => `
+        <div class="question-card">
+          <div class="question-header">
+            <h3 style="margin: 0;">${item.title}</h3>
+            <span class="question-type">信息匹配</span>
+          </div>
+          <div style="margin-bottom: 24px;">
+            ${item.paragraphs.map(p => `
+              <div class="passage-paragraph">
+                <span class="paragraph-label">[${p.id}]</span>${p.text}
+              </div>
+            `).join('')}
+          </div>
+          <div style="background: #f8fafc; padding: 20px; border-radius: 8px;">
+            <h4>题目：</h4>
+            ${item.statements.map((s, sIdx) => `
+              <div style="margin: 16px 0; padding: 12px; background: white; border-radius: 8px;">
+                <p><strong>${sIdx + 1}. </strong>${s.q}</p>
+                <p style="color: var(--primary); font-weight: 600; margin-top: 8px;">答案：${s.answer}</p>
+                <p style="color: var(--muted); font-size: 13px; margin-top: 4px;">${s.analysis}</p>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderCarefulReading(data, container) {
+      container.innerHTML = data.map((item, idx) => `
+        <div class="question-card">
+          <div class="question-header">
+            <h3 style="margin: 0;">${item.title}</h3>
+            <span class="question-type">仔细阅读</span>
+          </div>
+          <div class="passage-text" style="margin-bottom: 24px;">
+            ${item.passage.split('\n\n').map(p => `<p style="margin-bottom: 16px; text-indent: 2em;">${p}</p>`).join('')}
+          </div>
+          ${item.questions.map((q, qIdx) => `
+            <div class="question-item" data-question="read-${idx}-${qIdx}">
+              <p class="question-text"><strong>Q${qIdx + 1}.</strong> ${q.q}</p>
+              <div class="options">
+                ${q.options.map((opt, optIdx) => `
+                  <div class="option" data-answer="${q.answer}" data-opt="${optIdx}" onclick="selectOption(this, 'read-${idx}-${qIdx}')">
+                    <span class="option-letter">${String.fromCharCode(65 + optIdx)}</span>
+                    <span>${opt}</span>
+                  </div>
+                `).join('')}
+              </div>
+              <div class="analysis-box" id="analysis-read-${idx}-${qIdx}">
+                <strong>💡 解析：</strong>${q.analysis}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `).join('');
+    }
+
+    // 渲染写作
+    function renderWriting() {
+      const content = document.getElementById('contentArea');
+      const data = Object.values(PracticeData.writing).flat();
+
+      content.innerHTML = data.map(item => `
+        <div class="question-card">
+          <div class="question-header">
+            <h3 style="margin: 0;">${item.title}</h3>
+            <span class="question-type">写作</span>
+          </div>
+          <div style="background: #fef3c7; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+            <strong>题目要求：</strong><br>${item.topic}
+          </div>
+          <div style="background: #dcfce7; padding: 20px; border-radius: 8px; margin-bottom: 20px; line-height: 2;">
+            <strong>范文：</strong><br>${item.template.replace(/\n/g, '<br>')}
+          </div>
+          <div style="background: #e0f2fe; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+            <strong>🔑 核心句型：</strong>
+            <ul style="margin: 8px 0; padding-left: 20px;">
+              ${item.keyPhrases.map(p => `<li style="margin: 8px 0;">${p}</li>`).join('')}
+            </ul>
+          </div>
+          <div style="color: var(--muted); font-size: 14px;">
+            <strong>📝 技巧提示：</strong>${item.tips}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // 渲染翻译
+    function renderTranslation() {
+      const content = document.getElementById('contentArea');
+      const data = PracticeData.translation;
+
+      content.innerHTML = data.map(item => `
+        <div class="question-card">
+          <div class="question-header">
+            <h3 style="margin: 0;">${item.title}</h3>
+            <span class="question-type">翻译</span>
+          </div>
+          <div class="translation-source">
+            <strong>中文原文：</strong><br>${item.source}
+          </div>
+          <div class="translation-reference">
+            <strong>参考译文：</strong><br>${item.reference}
+          </div>
+          <div style="background: #f0f9ff; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+            <strong>📚 核心词汇：</strong>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px;">
+              ${item.keyVocabulary.map(v => `
+                <span style="background: white; padding: 6px 12px; border-radius: 20px; font-size: 13px;">
+                  <strong>${v.chinese}</strong>: ${v.english}
+                </span>
+              `).join('')}
+            </div>
+          </div>
+          ${item.sentenceAnalysis ? `
+          <div style="background: #fdf4ff; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+            <strong>📖 句子解析：</strong>
+            ${item.sentenceAnalysis.map(s => `
+              <div style="margin: 12px 0; padding: 12px; background: white; border-radius: 8px;">
+                <p style="margin: 0 0 8px 0; font-weight: 500;">${s.chinese}</p>
+                <p style="margin: 0; color: var(--muted); font-size: 13px;">${s.analysis}</p>
+              </div>
+            `).join('')}
+          </div>
+          ` : ''}
+          <div style="color: var(--muted); font-size: 14px;">
+            <strong>💡 翻译技巧：</strong>${item.tips}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // 选择选项
+    function selectOption(element, questionId) {
+      const parent = element.closest('.question-item');
+      const options = parent.querySelectorAll('.option');
+      const answer = parseInt(element.dataset.answer);
+      const selected = parseInt(element.dataset.opt);
+
+      // 显示所有分析
+      const analysisBox = document.getElementById(`analysis-${questionId}`);
+      if (analysisBox) analysisBox.classList.add('show');
+
+      options.forEach((opt, idx) => {
+        opt.style.pointerEvents = 'none';
+        if (idx === answer) {
+          opt.classList.add('correct');
+        } else if (idx === selected && selected !== answer) {
+          opt.classList.add('wrong');
+        }
+      });
+    }
+  </script>
+</body>
+</html>
