@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>索引 - 四级真题学习工坊</title>
+  <meta name="description" content="浏览所有四级考试题型技巧">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/minimal.css">
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-container">
+      <a href="/" class="nav-brand">四级真题工坊</a>
+      <div class="nav-links">
+        <a href="learn.html" class="nav-link">学习</a>
+        <a href="flashcard.html" class="nav-link">闪卡</a>
+        <a href="roots.html" class="nav-link active">索引</a>
+        <a href="progress.html" class="nav-link">进度</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <h1 class="page-title">题型技巧索引</h1>
+    <p class="page-subtitle">搜索或筛选，点击卡片进入详情</p>
+  </div>
+
+  <div class="container">
+    <input type="text" class="search-box" id="searchBox" placeholder="搜索技巧名称..." oninput="searchRoots()">
+    
+    <div class="filter-buttons" style="margin-bottom: 24px;">
+      <button class="btn btn-secondary" onclick="filterByOrigin('all')">全部</button>
+      <button class="btn btn-secondary" onclick="filterByOrigin('听力部分')">听力</button>
+      <button class="btn btn-secondary" onclick="filterByOrigin('阅读部分')">阅读</button>
+      <button class="btn btn-secondary" onclick="filterByOrigin('写作部分')">写作</button>
+      <button class="btn btn-secondary" onclick="filterByOrigin('翻译部分')">翻译</button>
+      <button class="btn btn-secondary" onclick="filterByOrigin('答题策略')">策略</button>
+      <button class="btn btn-secondary" onclick="filterByOrigin('备考策略')">备考</button>
+    </div>
+
+    <div class="roots-grid" id="rootsGrid"></div>
+  </div>
+
+  <script src="js/wordData.js"></script>
+  <script>
+    function renderRoots(roots) {
+      const container = document.getElementById('rootsGrid');
+      container.innerHTML = '';
+
+      const progress = getProgress();
+      const masteredIds = new Set(progress.masteredRoots);
+
+      roots.forEach(root => {
+        const card = document.createElement('div');
+        card.className = 'card root-card';
+        if (masteredIds.has(root.id)) card.classList.add('mastered');
+        card.onclick = () => viewDetail(root.id);
+
+        const name = document.createElement('div');
+        name.className = 'root-name';
+        name.textContent = root.root;
+
+        const meaning = document.createElement('div');
+        meaning.className = 'root-meaning';
+        meaning.textContent = root.meaning;
+
+        const origin = document.createElement('div');
+        origin.className = 'root-origin';
+        origin.textContent = root.origin;
+
+        card.appendChild(name);
+        card.appendChild(meaning);
+        card.appendChild(origin);
+
+        if (masteredIds.has(root.id)) {
+          const badge = document.createElement('span');
+          badge.className = 'mastered-badge';
+          badge.textContent = '✓ 已掌握';
+          card.appendChild(badge);
+        }
+
+        container.appendChild(card);
+      });
+    }
+
+    function searchRoots() {
+      const query = document.getElementById('searchBox').value.toLowerCase();
+      const filtered = WordRoots.filter(root =>
+        root.root.toLowerCase().includes(query) ||
+        root.meaning.toLowerCase().includes(query)
+      );
+      renderRoots(filtered);
+    }
+
+    function filterByOrigin(origin) {
+      if (origin === 'all') {
+        renderRoots(WordRoots);
+      } else {
+        const filtered = WordRoots.filter(root => root.origin === origin);
+        renderRoots(filtered);
+      }
+    }
+
+    function viewDetail(id) {
+      window.location.href = 'root-detail.html?id=' + id;
+    }
+
+    function getProgress() {
+      try {
+        const data = localStorage.getItem('progress');
+        if (!data) return { masteredRoots: [], currentRootIndex: 0 };
+        return JSON.parse(data);
+      } catch (e) {
+        return { masteredRoots: [], currentRootIndex: 0 };
+      }
+    }
+
+    // 初始化
+    renderRoots(WordRoots);
+  </script>
+</body>
+</html>

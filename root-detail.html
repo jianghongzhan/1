@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>技巧详情 - 四级真题学习工坊</title>
+  <meta name="description" content="查看四级考试技巧详细说明">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/minimal.css">
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-container">
+      <a href="/" class="nav-brand">四级真题工坊</a>
+      <div class="nav-links">
+        <a href="learn.html" class="nav-link">学习</a>
+        <a href="flashcard.html" class="nav-link">闪卡</a>
+        <a href="roots.html" class="nav-link">索引</a>
+        <a href="progress.html" class="nav-link">进度</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="learn-container">
+    <div class="learn-content">
+      <div class="learn-title" id="detailTitle">-</div>
+      <div class="learn-subtitle" id="detailMeaning">-</div>
+      <div class="root-origin" id="detailOrigin">-</div>
+      
+      <div class="learn-description" id="detailDescription">-</div>
+
+      <div class="examples-section">
+        <h3 class="examples-title">真题示例</h3>
+        <div id="examplesContainer"></div>
+      </div>
+
+      <div class="quiz-container">
+        <h3 class="examples-title">测试题</h3>
+        <div class="quiz-question" id="quizQuestion">-</div>
+        <div class="quiz-options" id="quizOptions"></div>
+      </div>
+    </div>
+
+    <div class="nav-controls">
+      <button class="btn btn-secondary" onclick="goBack()">返回索引</button>
+      <button class="btn btn-secondary" onclick="markMastered()">标记已掌握</button>
+    </div>
+  </div>
+
+  <script src="js/wordData.js"></script>
+  <script>
+    function loadDetail() {
+      const params = new URLSearchParams(window.location.search);
+      const id = parseInt(params.get('id'));
+
+      const root = WordRoots.find(r => r.id === id);
+      if (!root) {
+        console.warn('数据未找到，跳转回首页');
+        window.location.href = '/';
+        return;
+      }
+
+      document.getElementById('detailTitle').textContent = root.root;
+      document.getElementById('detailMeaning').textContent = root.meaning;
+      document.getElementById('detailOrigin').textContent = root.origin;
+      document.getElementById('detailDescription').textContent = root.description;
+
+      // 渲染示例
+      const examplesContainer = document.getElementById('examplesContainer');
+      examplesContainer.innerHTML = '';
+      root.examples.forEach(ex => {
+        const card = document.createElement('div');
+        card.className = 'example-card';
+        card.innerHTML = `
+          <div class="example-word">${ex.word}</div>
+          <div class="example-meaning">${ex.meaning}</div>
+          <div class="example-explanation">${ex.explanation}</div>
+        `;
+        examplesContainer.appendChild(card);
+      });
+
+      // 渲染测试题
+      document.getElementById('quizQuestion').textContent = root.quiz.question;
+      const quizOptions = document.getElementById('quizOptions');
+      quizOptions.innerHTML = '';
+      root.quiz.options.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-option';
+        btn.textContent = opt;
+        btn.onclick = () => checkAnswer(i, root.quiz.correctAnswer, root.quiz.options);
+        quizOptions.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(selected, correct, options) {
+      const quizOptions = document.querySelectorAll('.quiz-option');
+      quizOptions.forEach((btn, i) => {
+        btn.disabled = true;
+        if (i === correct) btn.classList.add('correct');
+        else if (i === selected && selected !== correct) btn.classList.add('wrong');
+      });
+
+      if (selected === correct) {
+        showFeedback('✓ 回答正确！', true);
+      } else {
+        showFeedback('✗ 回答错误，正确答案是：' + options[correct], false);
+      }
+    }
+
+    function showFeedback(message, isSuccess) {
+      const toast = document.createElement('div');
+      toast.className = `feedback-toast ${isSuccess ? 'success' : 'error'}`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    function markMastered() {
+      const params = new URLSearchParams(window.location.search);
+      const id = parseInt(params.get('id'));
+
+      const progress = getProgress();
+      if (!progress.masteredRoots.includes(id)) {
+        progress.masteredRoots.push(id);
+        localStorage.setItem('progress', JSON.stringify(progress));
+        showFeedback('✓ 已标记为掌握！', true);
+      }
+    }
+
+    function goBack() {
+      window.location.href = 'roots.html';
+    }
+
+    function getProgress() {
+      try {
+        const data = localStorage.getItem('progress');
+        if (!data) return { masteredRoots: [], currentRootIndex: 0 };
+        return JSON.parse(data);
+      } catch (e) {
+        return { masteredRoots: [], currentRootIndex: 0 };
+      }
+    }
+
+    // 初始化
+    loadDetail();
+  </script>
+</body>
+</html>

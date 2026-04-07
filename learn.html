@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>学习 - 四级真题学习工坊</title>
+  <meta name="description" content="渐进式学习四级考试各题型技巧">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/minimal.css">
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-container">
+      <a href="/" class="nav-brand">四级真题工坊</a>
+      <div class="nav-links">
+        <a href="learn.html" class="nav-link active">学习</a>
+        <a href="flashcard.html" class="nav-link">闪卡</a>
+        <a href="roots.html" class="nav-link">索引</a>
+        <a href="progress.html" class="nav-link">进度</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="learn-container">
+    <div class="learn-header">
+      <div class="progress-info">
+        <span id="currentIndex">1</span> / <span id="totalCount">30</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressBar" style="width: 3%"></div>
+      </div>
+    </div>
+
+    <div class="learn-content">
+      <div class="learn-title" id="learnTitle">-</div>
+      <div class="learn-subtitle" id="learnSubtitle">-</div>
+      <div class="root-origin" id="learnOrigin">-</div>
+      
+      <div class="learn-description" id="learnDescription">-</div>
+
+      <div class="examples-section">
+        <h3 class="examples-title">真题示例</h3>
+        <div id="examplesContainer"></div>
+      </div>
+
+      <div class="quiz-container">
+        <h3 class="examples-title">测试题</h3>
+        <div class="quiz-question" id="quizQuestion">-</div>
+        <div class="quiz-options" id="quizOptions"></div>
+      </div>
+    </div>
+
+    <div class="nav-controls">
+      <button class="btn btn-secondary" id="prevBtn" onclick="prevRoot()">上一个</button>
+      <button class="btn btn-secondary" id="markBtn" onclick="markMastered()">标记已掌握</button>
+      <button class="btn btn-primary" id="nextBtn" onclick="nextRoot()">下一个</button>
+    </div>
+  </div>
+
+  <script src="js/wordData.js"></script>
+  <script>
+    let currentIndex = 0;
+
+    function loadRoot(index) {
+      if (index < 0 || index >= WordRoots.length) return;
+      currentIndex = index;
+      const root = WordRoots[index];
+
+      document.getElementById('learnTitle').textContent = root.root;
+      document.getElementById('learnSubtitle').textContent = root.meaning;
+      document.getElementById('learnOrigin').textContent = root.origin;
+      document.getElementById('learnDescription').textContent = root.description;
+
+      // 更新进度
+      document.getElementById('currentIndex').textContent = index + 1;
+      document.getElementById('totalCount').textContent = WordRoots.length;
+      const percentage = ((index + 1) / WordRoots.length) * 100;
+      document.getElementById('progressBar').style.width = percentage + '%';
+
+      // 渲染示例
+      const examplesContainer = document.getElementById('examplesContainer');
+      examplesContainer.innerHTML = '';
+      root.examples.forEach(ex => {
+        const card = document.createElement('div');
+        card.className = 'example-card';
+        card.innerHTML = `
+          <div class="example-word">${ex.word}</div>
+          <div class="example-meaning">${ex.meaning}</div>
+          <div class="example-explanation">${ex.explanation}</div>
+        `;
+        examplesContainer.appendChild(card);
+      });
+
+      // 渲染测试题
+      document.getElementById('quizQuestion').textContent = root.quiz.question;
+      const quizOptions = document.getElementById('quizOptions');
+      quizOptions.innerHTML = '';
+      root.quiz.options.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-option';
+        btn.textContent = opt;
+        btn.onclick = () => checkAnswer(i, root.quiz.correctAnswer);
+        quizOptions.appendChild(btn);
+      });
+
+      // 更新按钮状态
+      document.getElementById('prevBtn').disabled = index === 0;
+      document.getElementById('nextBtn').disabled = index === WordRoots.length - 1;
+
+      // 保存进度
+      saveProgress(index);
+    }
+
+    function checkAnswer(selected, correct) {
+      const options = document.querySelectorAll('.quiz-option');
+      options.forEach((btn, i) => {
+        btn.disabled = true;
+        if (i === correct) btn.classList.add('correct');
+        else if (i === selected && selected !== correct) btn.classList.add('wrong');
+      });
+
+      if (selected === correct) {
+        showFeedback('✓ 回答正确！', true);
+      } else {
+        showFeedback('✗ 回答错误，正确答案是：' + WordRoots[currentIndex].quiz.options[correct], false);
+      }
+    }
+
+    function showFeedback(message, isSuccess) {
+      const toast = document.createElement('div');
+      toast.className = `feedback-toast ${isSuccess ? 'success' : 'error'}`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    function prevRoot() {
+      if (currentIndex > 0) loadRoot(currentIndex - 1);
+    }
+
+    function nextRoot() {
+      if (currentIndex < WordRoots.length - 1) loadRoot(currentIndex + 1);
+    }
+
+    function markMastered() {
+      const progress = getProgress();
+      if (!progress.masteredRoots.includes(WordRoots[currentIndex].id)) {
+        progress.masteredRoots.push(WordRoots[currentIndex].id);
+        localStorage.setItem('progress', JSON.stringify(progress));
+        showFeedback('✓ 已标记为掌握！', true);
+      }
+    }
+
+    function getProgress() {
+      try {
+        const data = localStorage.getItem('progress');
+        if (!data) return { masteredRoots: [], currentRootIndex: 0 };
+        return JSON.parse(data);
+      } catch (e) {
+        return { masteredRoots: [], currentRootIndex: 0 };
+      }
+    }
+
+    function saveProgress(index) {
+      const progress = getProgress();
+      progress.currentRootIndex = index;
+      localStorage.setItem('progress', JSON.stringify(progress));
+    }
+
+    // 初始化
+    const progress = getProgress();
+    loadRoot(progress.currentRootIndex || 0);
+
+    // 键盘控制
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') prevRoot();
+      if (e.key === 'ArrowRight') nextRoot();
+    });
+  </script>
+</body>
+</html>

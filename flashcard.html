@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>闪卡 - 四级真题学习工坊</title>
+  <meta name="description" content="闪卡复习四级考试题型技巧">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/minimal.css">
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-container">
+      <a href="/" class="nav-brand">四级真题工坊</a>
+      <div class="nav-links">
+        <a href="learn.html" class="nav-link">学习</a>
+        <a href="flashcard.html" class="nav-link active">闪卡</a>
+        <a href="roots.html" class="nav-link">索引</a>
+        <a href="progress.html" class="nav-link">进度</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <h1 class="page-title">闪卡复习</h1>
+    <p class="page-subtitle">点击卡片翻转，←→切换，空格翻转</p>
+  </div>
+
+  <div class="flashcard-container">
+    <div class="flashcard" id="flashcard" onclick="flipCard()">
+      <div class="flashcard-inner">
+        <div class="flashcard-front">
+          <div class="flashcard-root" id="frontRoot">-</div>
+          <div class="flashcard-meaning" id="frontMeaning">-</div>
+          <div class="root-origin" id="frontOrigin">-</div>
+        </div>
+        <div class="flashcard-back">
+          <div class="flashcard-root" id="backRoot">-</div>
+          <div class="flashcard-description" id="backDescription">-</div>
+          <div id="backExamples" style="margin-top: 16px; font-size: 0.9rem;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container" style="text-align: center;">
+    <div class="progress-info">
+      <span id="cardIndex">1</span> / <span id="cardTotal">30</span>
+      <span id="masteredInfo" style="color: var(--color-success); margin-left: 16px;"></span>
+    </div>
+  </div>
+
+  <div class="nav-controls">
+    <button class="btn btn-secondary" onclick="prevCard()">上一个 (←)</button>
+    <button class="btn btn-secondary" onclick="markMastered()">标记掌握</button>
+    <button class="btn btn-primary" onclick="nextCard()">下一个 (→)</button>
+  </div>
+
+  <script src="js/wordData.js"></script>
+  <script>
+    let currentIndex = 0;
+
+    function loadCard(index) {
+      if (index < 0 || index >= WordRoots.length) return;
+      currentIndex = index;
+      const root = WordRoots[index];
+
+      document.getElementById('frontRoot').textContent = root.root;
+      document.getElementById('frontMeaning').textContent = root.meaning;
+      document.getElementById('frontOrigin').textContent = root.origin;
+
+      document.getElementById('backRoot').textContent = root.root;
+      document.getElementById('backDescription').textContent = root.description;
+
+      const backExamples = document.getElementById('backExamples');
+      backExamples.innerHTML = '';
+      root.examples.slice(0, 2).forEach(ex => {
+        const div = document.createElement('div');
+        div.textContent = ex.word + ': ' + ex.meaning;
+        backExamples.appendChild(div);
+      });
+
+      document.getElementById('cardIndex').textContent = index + 1;
+      document.getElementById('cardTotal').textContent = WordRoots.length;
+
+      // 显示掌握状态
+      const progress = getProgress();
+      const mastered = progress.masteredRoots.includes(root.id);
+      document.getElementById('masteredInfo').textContent = mastered ? '✓ 已掌握' : '';
+
+      // 重置翻转状态
+      document.getElementById('flashcard').classList.remove('flipped');
+    }
+
+    function flipCard() {
+      document.getElementById('flashcard').classList.toggle('flipped');
+    }
+
+    function prevCard() {
+      if (currentIndex > 0) loadCard(currentIndex - 1);
+    }
+
+    function nextCard() {
+      if (currentIndex < WordRoots.length - 1) loadCard(currentIndex + 1);
+    }
+
+    function markMastered() {
+      const progress = getProgress();
+      if (!progress.masteredRoots.includes(WordRoots[currentIndex].id)) {
+        progress.masteredRoots.push(WordRoots[currentIndex].id);
+        localStorage.setItem('progress', JSON.stringify(progress));
+        document.getElementById('masteredInfo').textContent = '✓ 已掌握';
+      }
+    }
+
+    function getProgress() {
+      try {
+        const data = localStorage.getItem('progress');
+        if (!data) return { masteredRoots: [], currentRootIndex: 0 };
+        return JSON.parse(data);
+      } catch (e) {
+        return { masteredRoots: [], currentRootIndex: 0 };
+      }
+    }
+
+    // 初始化
+    loadCard(0);
+
+    // 键盘控制
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') prevCard();
+      if (e.key === 'ArrowRight') nextCard();
+      if (e.key === ' ') {
+        e.preventDefault();
+        flipCard();
+      }
+    });
+  </script>
+</body>
+</html>

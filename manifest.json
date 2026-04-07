@@ -1,0 +1,21 @@
+{
+  "name": "四级真题学习工坊",
+  "short_name": "CET4工坊",
+  "description": "30个题型技巧，听力阅读写作翻译真题解析全覆盖",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#FBBF24",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>进度 - 四级真题学习工坊</title>
+  <meta name="description" content="查看四级考试技巧学习进度">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/minimal.css">
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-container">
+      <a href="/" class="nav-brand">四级真题工坊</a>
+      <div class="nav-links">
+        <a href="learn.html" class="nav-link">学习</a>
+        <a href="flashcard.html" class="nav-link">闪卡</a>
+        <a href="roots.html" class="nav-link">索引</a>
+        <a href="progress.html" class="nav-link active">进度</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <h1 class="page-title">学习进度</h1>
+    <p class="page-subtitle">追踪你的四级备考进度</p>
+  </div>
+
+  <div class="container">
+    <div class="stat-grid" style="margin-bottom: 48px;">
+      <div class="stat-card">
+        <div class="stat-value" id="masteredCount">0</div>
+        <div class="stat-label">已掌握</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="totalCount">30</div>
+        <div class="stat-label">总计</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="percentage">0%</div>
+        <div class="stat-label">完成率</div>
+      </div>
+    </div>
+
+    <div style="margin-bottom: 24px;">
+      <div class="progress-bar" style="height: 16px;">
+        <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <h3 style="margin-bottom: 16px;">已掌握技巧</h3>
+    <div class="roots-grid" id="masteredGrid"></div>
+
+    <div style="margin-top: 48px; text-align: center;">
+      <button class="btn btn-secondary" onclick="resetProgress()">重置进度</button>
+    </div>
+  </div>
+
+  <script src="js/wordData.js"></script>
+  <script>
+    function loadProgress() {
+      const progress = getProgress();
+      const masteredCount = progress.masteredRoots.length;
+      const totalCount = WordRoots.length;
+      const percentage = Math.round((masteredCount / totalCount) * 100);
+
+      document.getElementById('masteredCount').textContent = masteredCount;
+      document.getElementById('totalCount').textContent = totalCount;
+      document.getElementById('percentage').textContent = percentage + '%';
+      document.getElementById('progressBar').style.width = percentage + '%';
+
+      // 显示已掌握列表
+      const grid = document.getElementById('masteredGrid');
+      grid.innerHTML = '';
+
+      if (masteredCount === 0) {
+        grid.innerHTML = '<p style="color: var(--color-text-secondary); text-align: center;">还没有标记任何技巧为已掌握</p>';
+        return;
+      }
+
+      WordRoots.forEach(root => {
+        if (progress.masteredRoots.includes(root.id)) {
+          const card = document.createElement('div');
+          card.className = 'card root-card';
+          card.onclick = () => viewDetail(root.id);
+
+          const name = document.createElement('div');
+          name.className = 'root-name';
+          name.textContent = root.root;
+
+          const meaning = document.createElement('div');
+          meaning.className = 'root-meaning';
+          meaning.textContent = root.meaning;
+
+          const badge = document.createElement('span');
+          badge.className = 'mastered-badge';
+          badge.textContent = '✓ 已掌握';
+
+          card.appendChild(name);
+          card.appendChild(meaning);
+          card.appendChild(badge);
+          grid.appendChild(card);
+        }
+      });
+    }
+
+    function resetProgress() {
+      if (confirm('确定要重置所有进度吗？此操作无法撤销。')) {
+        localStorage.removeItem('progress');
+        loadProgress();
+      }
+    }
+
+    function viewDetail(id) {
+      window.location.href = 'root-detail.html?id=' + id;
+    }
+
+    function getProgress() {
+      try {
+        const data = localStorage.getItem('progress');
+        if (!data) return { masteredRoots: [], currentRootIndex: 0 };
+        return JSON.parse(data);
+      } catch (e) {
+        return { masteredRoots: [], currentRootIndex: 0 };
+      }
+    }
+
+    // 初始化
+    loadProgress();
+  </script>
+</body>
+</html>
